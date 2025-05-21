@@ -175,7 +175,7 @@ async def reps(interaction: discord.Interaction, stars: app_commands.Choice[int]
     embed.add_field(name="Review:", value=reviewmessage, inline=False)
     current_datetime = datetime.utcnow()
     formatted_date = current_datetime.strftime("%d %B %Y")
-    embed.set_footer(text=f"© {current_datetime.year} Sovereign Studio  - {formatted_date}")
+    embed.set_footer(text=f"© {current_datetime.year} Sovereign Studio - {formatted_date}")
     await interaction.followup.send(embed=embed)
 
 @bot.tree.command(name="daily", description="Claim 10 point harian kamu!")
@@ -199,7 +199,7 @@ async def daily(interaction: discord.Interaction):
             minutes, _ = divmod(remainder, 60)
 
             return await interaction.followup.send(
-                f"<:4366orangesmalldot:1316385342911287348> Kamu sudah klaim hari ini! Coba lagi dalam **{hours} jam {minutes} menit**.",
+                f"<:4366orangesmalldot:1316385342911287348> You've already claimed today! Try again in **{hours}h {minutes}m**.",
                 ephemeral=True
             )
 
@@ -213,7 +213,7 @@ async def daily(interaction: discord.Interaction):
         save_daily_log(daily_log)
 
         await interaction.followup.send(
-            f"<:8484greensmalldot:1316385337903419433> Kamu berhasil klaim **10 Point** hari ini! Total: `{points[user_id]}`",
+            f"<:8484greensmalldot:1316385337903419433> You successfully claimed **10 Points** today! Total: `{points[user_id]}`",
             ephemeral=True
         )
 
@@ -268,13 +268,13 @@ async def buy(interaction: discord.Interaction, idproduct: str):
     product = products.get(idproduct)
 
     if not product:
-        await interaction.response.send_message("<:1476redsmalldot:1316385340180664373> Produk tidak ditemukan.", ephemeral=True)
+        await interaction.response.send_message("<:1476redsmalldot:1316385340180664373> Product not found.", ephemeral=True)
         return
 
     user_id = str(interaction.user.id)
     points = load_points()
     if points.get(user_id, 0) < product['price']:
-        await interaction.response.send_message("<:4366orangesmalldot:1316385342911287348> Poin kamu tidak cukup untuk membeli produk ini.", ephemeral=True)
+        await interaction.response.send_message("<:4366orangesmalldot:1316385342911287348> Your points are not enough to purchase this product.", ephemeral=True)
         return
 
     points[user_id] -= product['price']
@@ -293,18 +293,17 @@ async def buy(interaction: discord.Interaction, idproduct: str):
     })
     save_purchases(purchases)
 
-    embed = discord.Embed(title="Pembelian Berhasil", color=0xd4c32c)
-    embed.add_field(name="Nama Produk", value=product['name'], inline=False)
-    embed.add_field(name="ID Produk", value=idproduct, inline=False)
-    embed.add_field(name="Detail Produk", value=product['description'], inline=False)
-    embed.add_field(name="Kode Klaim", value=f"`{code}` (Kirim ke owner untuk klaim)", inline=False)
-    embed.set_footer(text="Terima kasih telah berbelanja di Sovereign Studio!")
+    embed = discord.Embed(title="Purchase Successful", color=0xd4c32c)
+    embed.add_field(name="Product Name", value=product['name'], inline=False)
+    embed.add_field(name="ID Product", value=idproduct, inline=False)
+    embed.add_field(name="Product Details", value=product['description'], inline=False)
+    embed.add_field(name="Claim Code", value=f"`{code}` (Open a ticket to claim and include an image of this message.)", inline=False)
 
     try:
         await interaction.user.send(embed=embed)
-        await interaction.response.send_message("<:8484greensmalldot:1316385337903419433> Produk berhasil dibeli! Cek DM kamu untuk detailnya.", ephemeral=True)
+        await interaction.response.send_message("<:8484greensmalldot:1316385337903419433> Product successfully purchased! Check your DM for details.", ephemeral=True)
     except discord.Forbidden:
-        await interaction.response.send_message("<:1476redsmalldot:1316385340180664373> Gagal mengirim DM. Pastikan DM kamu terbuka.", ephemeral=True)
+        await interaction.response.send_message("<:1476redsmalldot:1316385340180664373> Failed to send DM. Make sure your DM is open.", ephemeral=True)
 
 @bot.tree.command(name="checkcode", description="(ADMIN) Lihat semua kode pembelian yang telah terkirim")
 async def checkcode(interaction: discord.Interaction):
